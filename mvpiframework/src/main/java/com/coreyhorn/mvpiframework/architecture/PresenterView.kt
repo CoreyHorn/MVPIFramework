@@ -6,6 +6,9 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
+import android.util.Log
+import com.coreyhorn.mvpiframework.LOGGING_TAG
+import com.coreyhorn.mvpiframework.MVPISettings
 import com.coreyhorn.mvpiframework.basemodels.Action
 import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
@@ -53,7 +56,11 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
     fun attachStream() {
         attachAttempted = true
         presenter?.let {
-            it.attachEventStream(events)
+            it.attachEventStream(events
+                    .doOnNext {
+                        if (MVPISettings.loggingEnabled) {
+                            Log.d(LOGGING_TAG, it.toString())}
+                    })
             it.states()
                     .subscribe { renderViewStateOnMainThread(it) }
                     .disposeWith(disposables)

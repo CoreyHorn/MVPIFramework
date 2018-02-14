@@ -1,5 +1,8 @@
 package com.coreyhorn.mvpiframework.architecture
 
+import android.util.Log
+import com.coreyhorn.mvpiframework.LOGGING_TAG
+import com.coreyhorn.mvpiframework.MVPISettings
 import com.coreyhorn.mvpiframework.basemodels.Action
 import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
@@ -16,9 +19,17 @@ abstract class Presenter<E : Event, A : Action, R : Result, S : State> {
 
     protected var eventDisposables = CompositeDisposable()
 
-    fun actions(): Observable<A> = actions
+    fun actions(): Observable<A> = actions.doOnNext {
+        if (MVPISettings.loggingEnabled) {
+            Log.d(LOGGING_TAG, it.toString())
+        }
+    }
 
-    fun states(): Observable<S> = states
+    fun states(): Observable<S> = states.doOnNext {
+        if (MVPISettings.loggingEnabled) {
+            Log.d(LOGGING_TAG, it.toString())
+        }
+    }
 
     open fun attachEventStream(events: Observable<E>) {
         eventDisposables.clear()
