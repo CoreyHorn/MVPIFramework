@@ -6,20 +6,17 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
-import android.util.Log
-import com.coreyhorn.mvpiframework.LOGGING_TAG
-import com.coreyhorn.mvpiframework.MVPISettings
 import com.coreyhorn.mvpiframework.basemodels.Action
 import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
 import com.coreyhorn.mvpiframework.basemodels.State
 import com.coreyhorn.mvpiframework.disposeWith
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
 
 interface PresenterView<E : Event, A : Action, R : Result, S : State> {
 
-    val events: PublishSubject<E>
+    val events: ReplaySubject<E>
 
     var presenter: Presenter<E, A, R, S>?
     var disposables: CompositeDisposable
@@ -56,11 +53,7 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
     fun attachStream() {
         attachAttempted = true
         presenter?.let {
-            it.attachEventStream(events
-                    .doOnNext {
-                        if (MVPISettings.loggingEnabled) {
-                            Log.d(LOGGING_TAG, it.toString())}
-                    })
+            it.attachEventStream(events)
             it.states()
                     .subscribe { renderViewStateOnMainThread(it) }
                     .disposeWith(disposables)
