@@ -6,6 +6,9 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
+import android.util.Log
+import com.coreyhorn.mvpiframework.LOGGING_TAG
+import com.coreyhorn.mvpiframework.MVPISettings
 import com.coreyhorn.mvpiframework.basemodels.Action
 import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
@@ -16,7 +19,7 @@ import io.reactivex.subjects.ReplaySubject
 
 interface PresenterView<E : Event, A : Action, R : Result, S : State> {
 
-    val events: ReplaySubject<E>
+    var events: ReplaySubject<E>
 
     var presenter: Presenter<E, A, R, S>?
     var disposables: CompositeDisposable
@@ -57,6 +60,14 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
             it.states()
                     .subscribe { renderViewStateOnMainThread(it) }
                     .disposeWith(disposables)
+
+            events.doOnNext {
+                if (MVPISettings.loggingEnabled) {
+                    Log.d(LOGGING_TAG, it.toString())
+                }
+            }
+            .subscribe()
+            .disposeWith(disposables)
         }
     }
 
@@ -65,6 +76,7 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
         disposables.clear()
         disposables = CompositeDisposable()
         presenter?.detachEventStream()
+        events = ReplaySubject.create()
     }
 
     fun onPresenterAvailable(presenter: Presenter<E, A, R, S>) {
