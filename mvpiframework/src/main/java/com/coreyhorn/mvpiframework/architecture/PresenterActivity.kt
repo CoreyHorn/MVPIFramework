@@ -8,14 +8,15 @@ import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
 import com.coreyhorn.mvpiframework.basemodels.State
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
 
 abstract class PresenterActivity<E : Event, A : Action, R : Result, S : State> : AppCompatActivity(), PresenterView<E, A, R, S> {
 
-    override val events: PublishSubject<E> = PublishSubject.create()
+    override var events: ReplaySubject<E> = ReplaySubject.create()
 
     override var presenter: Presenter<E, A, R, S>? = null
     override var disposables = CompositeDisposable()
+    override var attachAttempted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
