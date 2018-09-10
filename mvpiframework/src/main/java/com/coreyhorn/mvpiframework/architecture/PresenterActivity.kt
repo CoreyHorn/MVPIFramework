@@ -17,6 +17,7 @@ abstract class PresenterActivity<E : Event, A : Action, R : Result, S : State> :
     override var presenter: Presenter<E, A, R, S>? = null
     override var disposables = CompositeDisposable()
     override var attachAttempted = false
+    override var paused = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +26,13 @@ abstract class PresenterActivity<E : Event, A : Action, R : Result, S : State> :
 
     override fun onResume() {
         super.onResume()
+        paused = false
         attachStream()
         setupViewBindings()
     }
 
     override fun onPause() {
+        paused = true
         detachStream()
         super.onPause()
     }

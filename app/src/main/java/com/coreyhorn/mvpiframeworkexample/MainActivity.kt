@@ -11,6 +11,14 @@ class MainActivity : PresenterActivity<ExampleEvent, ExampleAction, ExampleResul
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         events.onNext(ExampleEvent.TestEvent())
+
+        if (savedInstanceState == null) {
+
+            val fragment = ExampleFragment()
+
+            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment)
+                    .commit()
+        }
     }
 
     //Should be a unique id
