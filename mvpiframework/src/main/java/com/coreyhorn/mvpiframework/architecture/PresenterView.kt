@@ -24,6 +24,7 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
     var presenter: Presenter<E, A, R, S>?
     var disposables: CompositeDisposable
     var attachAttempted: Boolean
+    var paused: Boolean
 
     val loaderCallbacks: LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>>
         get() = object : LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>> {
@@ -58,7 +59,11 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
         presenter?.let {
             it.attachEventStream(events)
             it.states()
-                    .subscribe { renderViewStateOnMainThread(it) }
+                    .subscribe {
+                        if (!paused) {
+                            renderViewStateOnMainThread(it)
+                        }
+                    }
                     .disposeWith(disposables)
 
             events.doOnNext {
