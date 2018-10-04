@@ -1,11 +1,12 @@
 package com.coreyhorn.mvpiframeworkexample
 
 import com.coreyhorn.mvpiframework.architecture.Interactor
+import io.reactivex.Observable
 
-class ExampleInteractor: Interactor<ExampleResult>() {
+class ExampleInteractor(actions: Observable<ExampleAction>): Interactor<ExampleResult>() {
 
     init {
-        results.onNext(ExampleResult.TestResult())
+        actions.map { ExampleResult.TestResult() }.subscribe(results)
     }
 
 }
