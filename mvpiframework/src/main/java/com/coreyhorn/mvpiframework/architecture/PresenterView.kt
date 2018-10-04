@@ -2,8 +2,6 @@ package com.coreyhorn.mvpiframework.architecture
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.util.Log
@@ -90,12 +88,6 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
         if (attachAttempted) {
             attachStream()
         }
-    }
-
-    private fun renderViewStateOnMainThread(state: S) {
-        val mainHandler = Handler(Looper.getMainLooper())
-        val renderRunnable = { renderViewState(state) }
-        mainHandler.post(renderRunnable)
     }
 
     fun initializeLoader(loaderCallbacks: LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>>)
