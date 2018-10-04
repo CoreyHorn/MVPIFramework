@@ -2,8 +2,6 @@ package com.coreyhorn.mvpiframework.architecture
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.util.Log
@@ -14,6 +12,7 @@ import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
 import com.coreyhorn.mvpiframework.basemodels.State
 import com.coreyhorn.mvpiframework.disposeWith
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
@@ -59,16 +58,17 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
         presenter?.let {
             it.attachEventStream(events)
             it.states()
-                    .subscribe {
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { state ->
                         if (!paused) {
-                            renderViewStateOnMainThread(it)
+                            renderViewState(state)
                         }
                     }
                     .disposeWith(disposables)
 
-            events.doOnNext {
+            events.doOnNext { event ->
                 if (MVPISettings.loggingEnabled) {
-                    Log.d(LOGGING_TAG, it.toString())
+                    Log.d(LOGGING_TAG, event.toString())
                 }
             }
             .subscribe()
@@ -88,12 +88,6 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
         if (attachAttempted) {
             attachStream()
         }
-    }
-
-    private fun renderViewStateOnMainThread(state: S) {
-        val mainHandler = Handler(Looper.getMainLooper())
-        val renderRunnable = { renderViewState(state) }
-        mainHandler.post(renderRunnable)
     }
 
     fun initializeLoader(loaderCallbacks: LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>>)
