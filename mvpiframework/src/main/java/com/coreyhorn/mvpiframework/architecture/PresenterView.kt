@@ -14,6 +14,7 @@ import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
 import com.coreyhorn.mvpiframework.basemodels.State
 import com.coreyhorn.mvpiframework.disposeWith
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
@@ -59,16 +60,17 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
         presenter?.let {
             it.attachEventStream(events)
             it.states()
-                    .subscribe {
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { state ->
                         if (!paused) {
-                            renderViewStateOnMainThread(it)
+                            renderViewState(state)
                         }
                     }
                     .disposeWith(disposables)
 
-            events.doOnNext {
+            events.doOnNext { event ->
                 if (MVPISettings.loggingEnabled) {
-                    Log.d(LOGGING_TAG, it.toString())
+                    Log.d(LOGGING_TAG, event.toString())
                 }
             }
             .subscribe()

@@ -5,6 +5,7 @@ import com.coreyhorn.mvpiframework.LOGGING_TAG
 import com.coreyhorn.mvpiframework.MVPISettings
 import com.coreyhorn.mvpiframework.basemodels.Result
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.ReplaySubject
 
 abstract class Interactor<R : Result> {
@@ -16,5 +17,5 @@ abstract class Interactor<R : Result> {
                 if (MVPISettings.loggingEnabled) {
                     Log.d(LOGGING_TAG, it.toString())
                 }
-            }
+            }.observeOn(AndroidSchedulers.mainThread())
 }
