@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.LoaderManager
 import android.view.View
+import android.view.ViewTreeObserver
 import com.coreyhorn.mvpiframework.basemodels.Action
 import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
@@ -27,19 +28,31 @@ abstract class PresenterFragment<E : Event, A : Action, R : Result, S : State> :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setView(view)
-        view.post {
-            setupViewBindings(view)
-        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                setView(view)
+            }
+        })
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         attachStream()
     }
 
-    override fun onDestroy() {
+    override fun onResume() {
+        super.onResume()
+        attachStream()
+    }
+
+    override fun onStop() {
         detachStream()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        rootView = null
         super.onDestroy()
     }
 

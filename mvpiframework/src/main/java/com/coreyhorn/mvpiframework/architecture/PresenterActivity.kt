@@ -1,6 +1,7 @@
 package com.coreyhorn.mvpiframework.architecture
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.app.LoaderManager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -35,15 +36,27 @@ abstract class PresenterActivity<E : Event, A : Action, R : Result, S : State> :
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 setView(view)
-                view.post {
-                    setupViewBindings(view)
-                }
             }
         })
     }
 
-    override fun onDestroy() {
+    override fun onResume() {
+        super.onResume()
+        attachStream()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
         detachStream()
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
+    override fun onStop() {
+        detachStream()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        rootView = null
         super.onDestroy()
     }
 

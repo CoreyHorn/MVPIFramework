@@ -86,11 +86,12 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
 
     private fun attachIfReady() {
         if (readyToAttach()) {
+            rootView?.let { it.post { setupViewBindings(it) }}
             disposables = CompositeDisposable()
             presenter?.let {
                 it.attachEventStream(events)
                 it.states().observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { state -> rootView?.let { view -> view.post { renderViewState(view, state) } } }
+                        .subscribe { state -> rootView?.let { view -> view.post { if (attached) renderViewState(view, state) } } }
                         .disposeWith(disposables)
 
                 events.doOnNext { event ->
