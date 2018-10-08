@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.coreyhorn.mvpiframework.architecture.PresenterFactory
 import com.coreyhorn.mvpiframework.architecture.PresenterFragment
-import kotlinx.android.synthetic.main.fragment_example.*
+import kotlinx.android.synthetic.main.fragment_example.view.*
 
 class ExampleFragment: PresenterFragment<ExampleEvent, ExampleAction, ExampleResult, ExampleState>() {
 
@@ -20,10 +20,11 @@ class ExampleFragment: PresenterFragment<ExampleEvent, ExampleAction, ExampleRes
         override fun create() = ExamplePresenter()
     }
 
-    override fun renderViewState(state: ExampleState) {
-        fragmentText.text = "Whatever Test"
+    override fun renderViewState(view: View, state: ExampleState) {
+        view.fragmentText.text = state.whatever
     }
 
-    override fun setupViewBindings() {
+    override fun setupViewBindings(view: View) {
+        view.changeText.setOnClickListener { events.onNext(ExampleEvent.TestEvent()) }
     }
 }

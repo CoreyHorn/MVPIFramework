@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.util.Log
+import android.view.View
 import com.coreyhorn.mvpiframework.LOGGING_TAG
 import com.coreyhorn.mvpiframework.MVPISettings
 import com.coreyhorn.mvpiframework.basemodels.Action
@@ -22,8 +23,9 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
 
     var presenter: Presenter<E, A, R, S>?
     var disposables: CompositeDisposable
-    var attachAttempted: Boolean
-    var paused: Boolean
+
+    var attached: Boolean
+    var rootView: View?
 
     val loaderCallbacks: LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>>
         get() = object : LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>> {
@@ -54,46 +56,52 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
     }
 
     fun attachStream() {
-        attachAttempted = true
-        presenter?.let {
-            it.attachEventStream(events)
-            it.states()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { state ->
-                        if (!paused) {
-                            renderViewState(state)
-                        }
-                    }
-                    .disposeWith(disposables)
-
-            events.doOnNext { event ->
-                if (MVPISettings.loggingEnabled) {
-                    Log.d(LOGGING_TAG, event.toString())
-                }
-            }
-            .subscribe()
-            .disposeWith(disposables)
-        }
+        attachIfReady()
     }
 
     fun detachStream() {
-        attachAttempted = false
         disposables.clear()
         disposables = CompositeDisposable()
         presenter?.detachEventStream()
         events = ReplaySubject.create()
+        attached = false
     }
 
     fun onPresenterAvailable(presenter: Presenter<E, A, R, S>) {
-        if (attachAttempted) {
-            attachStream()
-        }
+        this.presenter = presenter
+        attachIfReady()
     }
 
     fun initializeLoader(loaderCallbacks: LoaderManager.LoaderCallbacks<Presenter<E, A, R, S>>)
     fun getContext(): Context?
     fun loaderId(): Int
     fun presenterFactory(): PresenterFactory<Presenter<E, A, R, S>>
-    fun renderViewState(state: S)
-    fun setupViewBindings()
+    fun renderViewState(view: View, state: S)
+    fun setupViewBindings(view: View)
+
+    fun setView(view: View) {
+        rootView = view
+        attachIfReady()
+    }
+
+    private fun attachIfReady() {
+        if (readyToAttach()) {
+            rootView?.let { it.post { setupViewBindings(it) }}
+            disposables = CompositeDisposable()
+            presenter?.let {
+                it.attachEventStream(events)
+                it.states().observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { state -> rootView?.let { view -> view.post { if (attached) renderViewState(view, state) } } }
+                        .disposeWith(disposables)
+
+                events.doOnNext { event ->
+                    if (MVPISettings.loggingEnabled) {
+                        Log.d(LOGGING_TAG, event.toString())
+                    }}.subscribe().disposeWith(disposables)
+            }
+            attached = true
+        }
+    }
+
+    private fun readyToAttach(): Boolean = !attached && presenter != null && rootView != null
 }
