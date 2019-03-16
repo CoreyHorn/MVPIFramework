@@ -15,7 +15,7 @@ abstract class Interactor<R : Result> {
     fun results(): Observable<R> =
             results.doOnNext {
                 if (MVPISettings.loggingEnabled) {
-                    Log.d(LOGGING_TAG, it.toString())
+                    Log.d(LOGGING_TAG, it?.toString())
                 }
             }.observeOn(AndroidSchedulers.mainThread())
 }
