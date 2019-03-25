@@ -21,13 +21,13 @@ abstract class Presenter<E : Event, A : Action, R : Result, S : State> {
 
     fun actions(): Observable<A> = actions.doOnNext {
         if (MVPISettings.loggingEnabled) {
-            Log.d(LOGGING_TAG, it.toString())
+            Log.d(LOGGING_TAG, it?.toString())
         }
     }
 
     fun states(): Observable<S> = states.doOnNext {
         if (MVPISettings.loggingEnabled) {
-            Log.d(LOGGING_TAG, it.toString())
+            Log.d(LOGGING_TAG, it?.toString())
         }
     }
 

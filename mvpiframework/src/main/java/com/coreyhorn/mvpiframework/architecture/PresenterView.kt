@@ -96,7 +96,7 @@ interface PresenterView<E : Event, A : Action, R : Result, S : State> {
 
                 events.doOnNext { event ->
                     if (MVPISettings.loggingEnabled) {
-                        Log.d(LOGGING_TAG, event.toString())
+                        Log.d(LOGGING_TAG, event?.toString())
                     }}.subscribe().disposeWith(disposables)
             }
             attached = true

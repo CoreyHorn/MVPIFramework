@@ -34,6 +34,7 @@ dependencies {
     })
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
 
     compile project(":mvpiframework")
 }

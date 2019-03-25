@@ -25,6 +25,8 @@ class ExampleFragment: PresenterFragment<ExampleEvent, ExampleAction, ExampleRes
     }
 
     override fun setupViewBindings(view: View) {
-        view.changeText.setOnClickListener { events.onNext(ExampleEvent.TestEvent()) }
+        view.changeText.setOnClickListener {
+            events.onNext(ExampleEvent.TestEvent())
+        }
     }
 }
