@@ -1,12 +1,14 @@
 package com.coreyhorn.mvpiframeworkexample
 
-import com.coreyhorn.mvpiframework.architecture.Interactor
+import com.coreyhorn.mvpiframework.architecture.MVIInteractor
 import io.reactivex.Observable
 
-class ExampleInteractor(actions: Observable<ExampleAction>): Interactor<ExampleResult>() {
+class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<ExampleEvent, ExampleResult>(events) {
 
-    init {
-        actions.map { ExampleResult.TestResult() }.subscribe(results)
+    override fun eventToResult(event: ExampleEvent): ExampleResult {
+        return when (event) {
+            is ExampleEvent.TestEvent -> ExampleResult.TestResult()
+            is ExampleEvent.ChangeText -> ExampleResult.ChangedText(java.util.UUID.randomUUID().toString())
+        }
     }
-
 }

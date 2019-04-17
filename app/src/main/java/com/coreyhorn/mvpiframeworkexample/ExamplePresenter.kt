@@ -1,27 +1,19 @@
 package com.coreyhorn.mvpiframeworkexample
 
-import com.coreyhorn.mvpiframework.architecture.Presenter
+import com.coreyhorn.mvpiframework.architecture.MVIInteractor
+import com.coreyhorn.mvpiframework.architecture.MVIPresenter
 import io.reactivex.Observable
-import java.util.*
 
-class ExamplePresenter: Presenter<ExampleEvent, ExampleAction, ExampleResult, ExampleState>() {
+class ExamplePresenter(initialState: ExampleState): MVIPresenter<ExampleEvent, ExampleResult, ExampleState>(initialState) {
 
-    init {
-        attachResultStream(ExampleInteractor(actions).results())
+    override fun provideInteractor(events: Observable<ExampleEvent>): MVIInteractor<ExampleEvent, ExampleResult> {
+        return ExampleInteractor(events)
     }
 
-    override fun attachResultStream(results: Observable<ExampleResult>) {
-        results.scan(ExampleState("hmm"), this::accumulator)
-                .subscribe(states)
-    }
-
-    override fun attachEventStream(events: Observable<ExampleEvent>) {
-        super.attachEventStream(events)
-
-        events.map { ExampleAction.TestAction() }.subscribe(actions)
-    }
-
-    private fun accumulator(previousState: ExampleState, result: ExampleResult): ExampleState {
-        return ExampleState(Date().time.toString())
+    override fun resultToState(previousState: ExampleState, result: ExampleResult): ExampleState {
+        return when (result) {
+            is ExampleResult.TestResult -> previousState
+            is ExampleResult.ChangedText -> previousState.copy(whatever = result.text)
+        }
     }
 }

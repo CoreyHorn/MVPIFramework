@@ -4,10 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import com.coreyhorn.mvpiframework.MVPISettings
-import com.coreyhorn.mvpiframework.architecture.PresenterActivity
-import com.coreyhorn.mvpiframework.architecture.PresenterFactory
+import com.coreyhorn.mvpiframework.architecture.MVIPresenter
+import com.coreyhorn.mvpiframework.views.MVIActivity
 
-class MainActivity : PresenterActivity<ExampleEvent, ExampleAction, ExampleResult, ExampleState>() {
+class MainActivity : MVIActivity<ExampleEvent, ExampleResult, ExampleState>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +29,11 @@ class MainActivity : PresenterActivity<ExampleEvent, ExampleAction, ExampleResul
 
     override fun getContext(): Context? = baseContext
 
-    override fun presenterFactory(): PresenterFactory<ExamplePresenter> = object: PresenterFactory<ExamplePresenter>() {
-        override fun create() = ExamplePresenter()
+    override fun presenterProvider(initialState: ExampleState): MVIPresenter<ExampleEvent, ExampleResult, ExampleState> {
+        return ExamplePresenter(initialState)
     }
 
-    override fun renderViewState(view: View, state: ExampleState) {
+    override fun renderState(view: View, state: ExampleState) {
 
     }
 
