@@ -17,6 +17,10 @@ abstract class MVIInteractor<E: Event, R: Result>(events: Observable<E>): Intera
     }
 
     fun results(): Observable<R> = results
+
+    protected fun pushResult(result: R) {
+        results.onNext(result)
+    }
 }
 
 private interface Interactor<E: Event, R: Result> {
