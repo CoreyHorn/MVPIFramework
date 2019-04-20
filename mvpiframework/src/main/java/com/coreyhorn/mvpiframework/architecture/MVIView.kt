@@ -78,14 +78,16 @@ interface MVIView<E: Event, R: Result, S: State> {
     fun detachView() {
         presenter?.disconnectEvents()
         disposables.clear()
+        events = ReplaySubject.create()
         attached = false
     }
 
     fun attachIfReady() {
         if (readyToAttach()) {
-            rootView?.let { it.post { setupViewBindings(it) } }
+            disposables.clear()
             disposables = CompositeDisposable()
 
+            rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
                 it.connectEvents(events)
                 it.states().observeOn(AndroidSchedulers.mainThread())
