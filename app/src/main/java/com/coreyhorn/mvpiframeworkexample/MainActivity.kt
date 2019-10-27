@@ -1,19 +1,16 @@
 package com.coreyhorn.mvpiframeworkexample
 
-import android.content.Context
 import android.os.Bundle
-import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.coreyhorn.mvpiframework.MVPISettings
-import com.coreyhorn.mvpiframework.architecture.MVIPresenter
-import com.coreyhorn.mvpiframework.views.MVIActivity
+import com.coreyhorn.mvpiframeworkexample.fragment.ExampleFragment
 
-class MainActivity : MVIActivity<ExampleEvent, ExampleResult, ExampleState>() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MVPISettings.loggingEnabled = true
         setContentView(R.layout.activity_main)
-        events.onNext(ExampleEvent.TestEvent())
 
         if (savedInstanceState == null) {
 
@@ -22,22 +19,5 @@ class MainActivity : MVIActivity<ExampleEvent, ExampleResult, ExampleState>() {
             supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment)
                     .commit()
         }
-    }
-
-    //Should be a unique id
-    override fun loaderId() = 1
-
-    override fun getContext(): Context? = baseContext
-
-    override fun presenterProvider(initialState: ExampleState): MVIPresenter<ExampleEvent, ExampleResult, ExampleState> {
-        return ExamplePresenter(initialState)
-    }
-
-    override fun renderState(view: View, state: ExampleState) {
-
-    }
-
-    override fun setupViewBindings(view: View) {
-
     }
 }

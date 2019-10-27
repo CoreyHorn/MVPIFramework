@@ -1,7 +1,7 @@
 package com.coreyhorn.mvpiframework.viewmodel
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewTreeObserver
 import com.coreyhorn.mvpiframework.MVIEvent
@@ -30,7 +30,7 @@ abstract class MVIFragment<E: MVIEvent, R: MVIResult, S: MVIState>: Fragment(), 
         view.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                ready(view, initialState())
+                viewReady(view, this@MVIFragment, presenterProvider())
             }
         })
     }

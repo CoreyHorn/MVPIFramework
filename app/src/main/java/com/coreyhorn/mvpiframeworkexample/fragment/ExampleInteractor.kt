@@ -1,21 +1,24 @@
-package com.coreyhorn.mvpiframeworkexample
+package com.coreyhorn.mvpiframeworkexample.fragment
 
 import android.util.Log
 import com.coreyhorn.mvpiframework.architecture.MVIInteractor
 import com.coreyhorn.mvpiframework.disposeWith
+import com.coreyhorn.mvpiframeworkexample.ExampleEvent
+import com.coreyhorn.mvpiframeworkexample.ExampleResult
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<ExampleEvent, ExampleResult>(events) {
 
-    private val disposables = CompositeDisposable()
-
     init {
         Observable.interval(0, 5, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     Log.d("stuff", "new text: " + this.toString())
-                    pushResult(ExampleResult.ChangedText(java.util.UUID.randomUUID().toString()))
+                    pushResult(ExampleResult.ChangedText(UUID.randomUUID().toString()))
                 }
                 .disposeWith(disposables)
     }
@@ -23,7 +26,7 @@ class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<Example
     override fun eventToResult(event: ExampleEvent): ExampleResult {
         return when (event) {
             is ExampleEvent.TestEvent -> ExampleResult.TestResult()
-            is ExampleEvent.ChangeText -> ExampleResult.ChangedText(java.util.UUID.randomUUID().toString())
+            is ExampleEvent.ChangeText -> ExampleResult.ChangedText(UUID.randomUUID().toString())
         }
     }
 }

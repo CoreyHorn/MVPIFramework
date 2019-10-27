@@ -1,5 +1,6 @@
 package com.coreyhorn.mvpiframework.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.coreyhorn.mvpiframework.MVIEvent
@@ -25,8 +26,10 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     private var isInteractorConnected = false
 
     override fun onCleared() {
+        Log.d("stuff", "clearing viewmodel: " + this)
         eventDisposables.dispose()
         interactorDisposables.dispose()
+        interactor?.destroy()
         interactor = null
 
         super.onCleared()
@@ -36,11 +39,13 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     // This will allow any asynchronous tasks to be started early.
     fun conditionallyInitializeInteractor(): MVIInteractor<E, R> {
         if (interactor == null) {
+            Log.d("stuff", "creating a new interactor")
             with (provideInteractor(events)) {
                 interactor = this
                 return this
             }
         } else {
+            Log.d("stuff", "returning interactor")
             return interactor!!
         }
     }

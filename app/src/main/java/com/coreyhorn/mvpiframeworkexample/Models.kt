@@ -1,17 +1,17 @@
 package com.coreyhorn.mvpiframeworkexample
 
-import com.coreyhorn.mvpiframework.basemodels.Event
-import com.coreyhorn.mvpiframework.basemodels.Result
-import com.coreyhorn.mvpiframework.basemodels.State
+import com.coreyhorn.mvpiframework.MVIEvent
+import com.coreyhorn.mvpiframework.MVIResult
+import com.coreyhorn.mvpiframework.MVIState
 
-sealed class ExampleEvent: Event() {
+sealed class ExampleEvent: MVIEvent() {
     class TestEvent: ExampleEvent()
     class ChangeText: ExampleEvent()
 }
 
-sealed class ExampleResult: Result() {
+sealed class ExampleResult: MVIResult() {
     class TestResult: ExampleResult()
     data class ChangedText(val text: String): ExampleResult()
 }
 
-data class ExampleState(val whatever: String): State()
+data class ExampleState(val whatever: String): MVIState()

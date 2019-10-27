@@ -1,10 +1,13 @@
-package com.coreyhorn.mvpiframeworkexample
+package com.coreyhorn.mvpiframeworkexample.fragment
 
 import com.coreyhorn.mvpiframework.architecture.MVIInteractor
-import com.coreyhorn.mvpiframework.architecture.MVIPresenter
+import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
+import com.coreyhorn.mvpiframeworkexample.ExampleEvent
+import com.coreyhorn.mvpiframeworkexample.ExampleResult
+import com.coreyhorn.mvpiframeworkexample.ExampleState
 import io.reactivex.Observable
 
-class ExamplePresenter(initialState: ExampleState): MVIPresenter<ExampleEvent, ExampleResult, ExampleState>(initialState) {
+class ExamplePresenter: MVIViewModel<ExampleEvent, ExampleResult, ExampleState>() {
 
     override fun provideInteractor(events: Observable<ExampleEvent>): MVIInteractor<ExampleEvent, ExampleResult> {
         return ExampleInteractor(events)

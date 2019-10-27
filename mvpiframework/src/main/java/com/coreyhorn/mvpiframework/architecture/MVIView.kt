@@ -1,15 +1,12 @@
 package com.coreyhorn.mvpiframework.architecture
 
 import android.content.Context
-import android.os.Bundle
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.coreyhorn.mvpiframework.*
 import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
@@ -23,30 +20,23 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     var attached: Boolean
 
-
-
-
+    var lifecycleOwner: LifecycleOwner
 
     fun getContext(): Context?
-//    fun presenterProvider(initialState: S): MVIPresenter<E, R, S>
+    fun presenterProvider(): MVIViewModel<E, R, S>
 
     fun renderState(view: View, state: S)
     fun setupViewBindings(view: View)
     fun initialState(): S
 
     // Called when the view is inflated and we have our initial / saved state provided by the Activity / Fragment
-    fun ready(view: View, state: S) {
-        rootView = view
-
-
-    }
-
-
 
     /**
      * Should be called as soon as the view has been inflated and can be modified / bound to.
      */
-    fun viewReady(view: View) {
+    fun viewReady(view: View, lifecycleOwner: LifecycleOwner, presenter: MVIViewModel<E, R, S>) {
+        this.presenter = presenter
+        this.lifecycleOwner = lifecycleOwner
         rootView = view
         attachIfReady()
     }
@@ -65,13 +55,15 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
-                it.attachEvents(events)
+                it.attachEvents(events, initialState())
                 it.states
-                        .subscribe { state ->
-                            rootView?.let { view ->
-                                view.post { if (attached) renderState(view, state) } }
-                        }
-                        .disposeWith(disposables)
+                        .observe(lifecycleOwner, object: Observer<S> {
+                            override fun onChanged(state: S) {
+                                rootView?.let { view ->
+                                    view.post { if (attached) renderState(view, state) }
+                                }
+                            }
+                        })
 
                 events.doOnNext { event ->
                     if (MVPISettings.loggingEnabled) {

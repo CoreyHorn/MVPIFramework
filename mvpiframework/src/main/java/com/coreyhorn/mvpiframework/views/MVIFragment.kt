@@ -1,23 +1,22 @@
 package com.coreyhorn.mvpiframework.views
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.LoaderManager
+import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewTreeObserver
-import com.coreyhorn.mvpiframework.architecture.MVIPresenter
+import com.coreyhorn.mvpiframework.MVIEvent
+import com.coreyhorn.mvpiframework.MVIResult
+import com.coreyhorn.mvpiframework.MVIState
 import com.coreyhorn.mvpiframework.architecture.MVIView
-import com.coreyhorn.mvpiframework.basemodels.Event
-import com.coreyhorn.mvpiframework.basemodels.Result
-import com.coreyhorn.mvpiframework.basemodels.State
+import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
-abstract class MVIFragment<E : Event, R : Result, S : State> : Fragment(), MVIView<E, R, S> {
+abstract class MVIFragment<E : MVIEvent, R : MVIResult, S : MVIState> : Fragment(), MVIView<E, R, S> {
 
     override var events: ReplaySubject<E> = ReplaySubject.create()
 
-    override var presenter: MVIPresenter<E, R, S>? = null
+    override var presenter: MVIViewModel<E, R, S>? = null
     override var disposables = CompositeDisposable()
     override var attached = false
     override var rootView: View? = null
@@ -27,7 +26,7 @@ abstract class MVIFragment<E : Event, R : Result, S : State> : Fragment(), MVIVi
         view.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                viewReady(view)
+                viewReady(view, this@MVIFragment, presenterProvider())
             }
         })
     }
@@ -49,11 +48,6 @@ abstract class MVIFragment<E : Event, R : Result, S : State> : Fragment(), MVIVi
 
     override fun onDestroy() {
         rootView = null
-        presenter?.destroy()
         super.onDestroy()
-    }
-
-    override fun initializeLoader(loaderCallbacks: LoaderManager.LoaderCallbacks<MVIPresenter<E, R, S>>) {
-        loaderManager.initLoader(loaderId(), null, loaderCallbacks)
     }
 }
