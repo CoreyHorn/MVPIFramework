@@ -16,6 +16,7 @@ abstract class MVIPresenter<E: Event, R: Result, S: State>(private val initialSt
     private val events: BehaviorSubject<E> = BehaviorSubject.create()
 
     private var eventDisposables = CompositeDisposable()
+    private var interactorDisposables = CompositeDisposable()
 
     private var interactor: MVIInteractor<E, R>? = null
 
@@ -62,6 +63,7 @@ abstract class MVIPresenter<E: Event, R: Result, S: State>(private val initialSt
 
     fun destroy() {
         disconnectEvents()
+        interactorDisposables.clear()
         interactor?.destroy()
         interactor = null
     }
@@ -72,7 +74,8 @@ abstract class MVIPresenter<E: Event, R: Result, S: State>(private val initialSt
 
             interactor.results()
                     .scan(initialState, this::resultToState)
-                    .subscribe(states)
+                    .subscribe { states.onNext(it) }
+                    .disposeWith(interactorDisposables)
 
             this.interactor = interactor
         }
