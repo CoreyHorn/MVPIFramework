@@ -6,66 +6,42 @@ import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
 import android.util.Log
 import android.view.View
-import com.coreyhorn.mvpiframework.LOGGING_TAG
-import com.coreyhorn.mvpiframework.MVPISettings
-import com.coreyhorn.mvpiframework.basemodels.Event
-import com.coreyhorn.mvpiframework.basemodels.Result
-import com.coreyhorn.mvpiframework.basemodels.State
-import com.coreyhorn.mvpiframework.disposeWith
+import androidx.lifecycle.ViewModelProviders
+import com.coreyhorn.mvpiframework.*
+import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
-interface MVIView<E: Event, R: Result, S: State> {
+interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     var events: ReplaySubject<E>
-    var presenter: MVIPresenter<E, R, S>?
+    var presenter: MVIViewModel<E, R, S>?
     var disposables: CompositeDisposable
+
     var rootView: View?
+
     var attached: Boolean
 
+
+
+
+
     fun getContext(): Context?
-    fun loaderId(): Int
-    fun initializeLoader(loaderCallbacks: LoaderManager.LoaderCallbacks<MVIPresenter<E, R, S>>)
-    fun presenterProvider(initialState: S): MVIPresenter<E, R, S>
+//    fun presenterProvider(initialState: S): MVIPresenter<E, R, S>
 
     fun renderState(view: View, state: S)
     fun setupViewBindings(view: View)
+    fun initialState(): S
 
-    /**
-     * Should be called as soon as a LoaderManager and an initial State is ready.
-     * This can be used to construct an initial state from savedInstanceState
-     * to handle state restoration through process death.
-     *
-     * Whether you do that or not, this library will handle configuration changes
-     * similar to ViewModel and ignore initialState if we already have one.
-     */
-    fun initializePresenter(loaderManager: LoaderManager, initialState: S) {
-        @Suppress("UNCHECKED_CAST")
-        val loader = loaderManager.getLoader<MVIPresenter<E, R, S>>(loaderId()) as? PresenterLoader<E, R, S>
+    // Called when the view is inflated and we have our initial / saved state provided by the Activity / Fragment
+    fun ready(view: View, state: S) {
+        rootView = view
 
-        val callbacks = object: LoaderManager.LoaderCallbacks<MVIPresenter<E, R, S>> {
-            override fun onCreateLoader(id: Int, args: Bundle?) = PresenterLoader(getContext()!!, ::presenterProvider, initialState)
 
-            override fun onLoadFinished(loader: Loader<MVIPresenter<E, R, S>>?, data: MVIPresenter<E, R, S>?) {
-                data?.preWarm()
-                presenter = data
-                attachIfReady()
-            }
-
-            override fun onLoaderReset(loader: Loader<MVIPresenter<E, R, S>>?) { presenter = null }
-        }
-
-        if (loader == null) {
-            initializeLoader(callbacks)
-        } else {
-            loader.presenter?.let {
-                presenter?.preWarm()
-                presenter = it
-                attachIfReady()
-            }
-        }
     }
+
+
 
     /**
      * Should be called as soon as the view has been inflated and can be modified / bound to.
@@ -76,7 +52,7 @@ interface MVIView<E: Event, R: Result, S: State> {
     }
 
     fun detachView() {
-        presenter?.disconnectEvents()
+        presenter?.detachEvents()
         disposables.clear()
         events = ReplaySubject.create()
         attached = false
@@ -89,8 +65,8 @@ interface MVIView<E: Event, R: Result, S: State> {
 
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
-                it.connectEvents(events)
-                it.states().observeOn(AndroidSchedulers.mainThread())
+                it.attachEvents(events)
+                it.states
                         .subscribe { state ->
                             rootView?.let { view ->
                                 view.post { if (attached) renderState(view, state) } }

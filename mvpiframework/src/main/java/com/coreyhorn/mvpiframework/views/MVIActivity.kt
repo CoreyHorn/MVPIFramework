@@ -53,6 +53,7 @@ abstract class MVIActivity<E : Event, R : Result, S : State> : AppCompatActivity
 
     override fun onDestroy() {
         rootView = null
+        presenter?.destroy()
         super.onDestroy()
     }
 

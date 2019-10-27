@@ -1,23 +1,23 @@
 package com.coreyhorn.mvpiframework.architecture
 
 import android.util.Log
-import com.coreyhorn.mvpiframework.LOGGING_TAG
-import com.coreyhorn.mvpiframework.MVPISettings
-import com.coreyhorn.mvpiframework.basemodels.Event
-import com.coreyhorn.mvpiframework.basemodels.Result
-import com.coreyhorn.mvpiframework.basemodels.State
-import com.coreyhorn.mvpiframework.disposeWith
+import com.coreyhorn.mvpiframework.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
-abstract class MVIPresenter<E: Event, R: Result, S: State>(private val initialState: S): Presenter<E, R, S> {
+abstract class MVIPresenter<E: MVIEvent, R: MVIResult, S: MVIState>(private val initialState: S): Presenter<E, R, S> {
     private val states: BehaviorSubject<S> = BehaviorSubject.create()
     private val events: BehaviorSubject<E> = BehaviorSubject.create()
 
     private var eventDisposables = CompositeDisposable()
 
     private var interactor: MVIInteractor<E, R>? = null
+
+    fun destroy() {
+        eventDisposables.clear()
+        interactor = null
+    }
 
     /**
      * Can be called as early as you receive an MVIPresenter instance to
@@ -73,7 +73,7 @@ abstract class MVIPresenter<E: Event, R: Result, S: State>(private val initialSt
     }
 }
 
-private interface Presenter<E: Event, R: Result, S: State> {
+private interface Presenter<E: MVIEvent, R: MVIResult, S: MVIState> {
     fun provideInteractor(events: Observable<E>): MVIInteractor<E, R>
     fun resultToState(previousState: S, result: R): S
 }

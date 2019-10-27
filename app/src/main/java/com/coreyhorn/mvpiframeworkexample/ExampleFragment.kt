@@ -14,11 +14,6 @@ class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() 
         return inflater!!.inflate(R.layout.fragment_example, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initializePresenter(loaderManager, ExampleState("initial string"))
-    }
-
     override fun loaderId() = 2
 
     override fun presenterProvider(initialState: ExampleState): MVIPresenter<ExampleEvent, ExampleResult, ExampleState> {
@@ -27,6 +22,11 @@ class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() 
 
     override fun renderState(view: View, state: ExampleState) {
         view.fragmentText.text = state.whatever
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initializePresenter(loaderManager, ExampleState("initial string"))
     }
 
     override fun setupViewBindings(view: View) {

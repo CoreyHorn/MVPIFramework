@@ -2,6 +2,7 @@ package com.coreyhorn.mvpiframework.architecture
 
 import android.content.Context
 import android.support.v4.content.Loader
+import android.util.Log
 
 import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
@@ -15,6 +16,8 @@ class PresenterLoader<E : Event, R : Result, S : State>(
 
     override fun onStartLoading() {
         super.onStartLoading()
+
+        Log.d("stuff", "onStartLoading: " + this)
 
         if (presenter != null) {
             deliverResult(presenter)
@@ -34,6 +37,8 @@ class PresenterLoader<E : Event, R : Result, S : State>(
     override fun onReset() {
         super.onReset()
 
+        Log.d("stuff", "clearing presenter from loader")
+        presenter?.destroy()
         presenter = null
     }
 }
