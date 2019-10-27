@@ -60,6 +60,12 @@ abstract class MVIPresenter<E: Event, R: Result, S: State>(private val initialSt
         }
     }
 
+    fun destroy() {
+        disconnectEvents()
+        interactor?.destroy()
+        interactor = null
+    }
+
     private fun connectInteractor() {
         if (interactor == null) {
             val interactor = provideInteractor(events)

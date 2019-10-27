@@ -4,11 +4,13 @@ import com.coreyhorn.mvpiframework.basemodels.Event
 import com.coreyhorn.mvpiframework.basemodels.Result
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
 abstract class MVIInteractor<E: Event, R: Result>(events: Observable<E>): Interactor<E, R> {
 
     private val results: ReplaySubject<R> = ReplaySubject.create()
+    val disposables = CompositeDisposable()
 
     init {
         events.map { eventToResult(it) }
@@ -17,6 +19,10 @@ abstract class MVIInteractor<E: Event, R: Result>(events: Observable<E>): Intera
     }
 
     fun results(): Observable<R> = results
+
+    fun destroy() {
+        disposables.clear()
+    }
 
     protected fun pushResult(result: R) {
         results.onNext(result)

@@ -53,7 +53,10 @@ interface MVIView<E: Event, R: Result, S: State> {
                 attachIfReady()
             }
 
-            override fun onLoaderReset(loader: Loader<MVIPresenter<E, R, S>>?) { presenter = null }
+            override fun onLoaderReset(loader: Loader<MVIPresenter<E, R, S>>?) {
+                presenter?.destroy()
+                presenter = null
+            }
         }
 
         if (loader == null) {
