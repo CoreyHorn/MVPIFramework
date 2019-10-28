@@ -14,15 +14,15 @@ import io.reactivex.subjects.PublishSubject
 abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel(), Presenter<E, R, S> {
 
     val states: MutableLiveData<S> = MutableLiveData()
-
     private val events: PublishSubject<E> = PublishSubject.create()
 
     private var eventDisposables = CompositeDisposable()
     private var interactorDisposables = CompositeDisposable()
 
-    private var interactor: MVIInteractor<E, R>? = null
-
     private var isInteractorConnected = false
+    private var isViewConnected = false
+
+    private var interactor: MVIInteractor<E, R>? = null
 
     override fun onCleared() {
         Log.d("stuff", "clearing viewmodel: " + this)
@@ -31,6 +31,7 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
         interactor?.destroy()
         interactor = null
         isInteractorConnected = false
+        isViewConnected = false
 
         super.onCleared()
     }
@@ -49,10 +50,13 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     }
 
     fun attachEvents(events: Observable<E>, state: S) {
-        eventDisposables.clear()
+        if (!isViewConnected) {
+            isViewConnected = true
+            eventDisposables.clear()
 
-        events.subscribe { this.events.onNext(it) }
-                .disposeWith(eventDisposables)
+            events.subscribe { this.events.onNext(it) }
+                    .disposeWith(eventDisposables)
+        }
 
         if (!isInteractorConnected) {
             isInteractorConnected = true
@@ -68,7 +72,8 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
         }
     }
 
-    fun detachEvents() {
+    fun detachView() {
+        isViewConnected = false
         eventDisposables.clear()
     }
 

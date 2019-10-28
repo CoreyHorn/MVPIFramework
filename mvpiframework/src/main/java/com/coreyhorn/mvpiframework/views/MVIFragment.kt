@@ -36,6 +36,11 @@ abstract class MVIFragment<E: MVIEvent, R: MVIResult, S: MVIState>: Fragment(), 
         })
     }
 
+    override fun onStart() {
+        super.onStart()
+        attachIfReady()
+    }
+
     override fun onStop() {
         detachView()
         super.onStop()

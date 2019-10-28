@@ -37,7 +37,7 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     fun detachView() {
         presenter?.states?.removeObservers(lifecycleOwner)
-        presenter?.detachEvents()
+        presenter?.detachView()
         disposables.clear()
         events = ReplaySubject.create()
         attached = false
