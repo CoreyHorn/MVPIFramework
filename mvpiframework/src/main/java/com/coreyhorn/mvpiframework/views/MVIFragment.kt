@@ -1,9 +1,9 @@
 package com.coreyhorn.mvpiframework.views
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.fragment.app.Fragment
 import com.coreyhorn.mvpiframework.MVIEvent
 import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState

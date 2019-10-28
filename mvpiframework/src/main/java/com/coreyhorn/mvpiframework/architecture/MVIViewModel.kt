@@ -10,7 +10,6 @@ import com.coreyhorn.mvpiframework.disposeWith
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.ReplaySubject
 
 abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel(), Presenter<E, R, S> {
 

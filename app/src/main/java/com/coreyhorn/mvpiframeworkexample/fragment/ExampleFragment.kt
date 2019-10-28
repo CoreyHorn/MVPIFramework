@@ -9,7 +9,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
 import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import com.coreyhorn.mvpiframework.views.MVIFragment
-import com.coreyhorn.mvpiframeworkexample.*
+import com.coreyhorn.mvpiframeworkexample.ExampleEvent
+import com.coreyhorn.mvpiframeworkexample.ExampleResult
+import com.coreyhorn.mvpiframeworkexample.ExampleState
+import com.coreyhorn.mvpiframeworkexample.R
 import kotlinx.android.synthetic.main.fragment_example.view.*
 
 class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() {

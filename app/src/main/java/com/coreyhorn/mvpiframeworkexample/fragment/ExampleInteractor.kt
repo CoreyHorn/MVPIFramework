@@ -7,7 +7,6 @@ import com.coreyhorn.mvpiframeworkexample.ExampleEvent
 import com.coreyhorn.mvpiframeworkexample.ExampleResult
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 import java.util.concurrent.TimeUnit
 
