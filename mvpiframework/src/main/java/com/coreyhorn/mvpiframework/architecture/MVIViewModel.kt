@@ -15,7 +15,7 @@ import io.reactivex.subjects.ReplaySubject
 abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel(), Presenter<E, R, S> {
 
     val states: MutableLiveData<S> = MutableLiveData()
-    private val events: ReplaySubject<E> = ReplaySubject.create()
+    private val events: PublishSubject<E> = PublishSubject.create()
 
     private var eventDisposables = CompositeDisposable()
     private var interactorDisposables = CompositeDisposable()
@@ -76,7 +76,6 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     fun detachView() {
         isViewConnected = false
         eventDisposables.clear()
-        events.cleanupBuffer()
     }
 
 }

@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
-abstract class MVIInteractor<E: MVIEvent, R: MVIResult>(val events: Observable<E>): Interactor<E, R> {
+abstract class MVIInteractor<E: MVIEvent, R: MVIResult>(private val events: Observable<E>): Interactor<E, R> {
 
     private val results: ReplaySubject<R> = ReplaySubject.create()
 
