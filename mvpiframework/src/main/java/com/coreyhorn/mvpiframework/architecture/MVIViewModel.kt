@@ -76,6 +76,7 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     fun detachView() {
         isViewConnected = false
         eventDisposables.clear()
+        events.cleanupBuffer()
     }
 
 }
