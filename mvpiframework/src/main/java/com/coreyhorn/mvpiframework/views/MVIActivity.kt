@@ -10,7 +10,7 @@ import com.coreyhorn.mvpiframework.MVIEvent
 import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState
 import com.coreyhorn.mvpiframework.architecture.MVIView
-import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
+import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 

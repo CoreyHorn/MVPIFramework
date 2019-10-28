@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProviders
-import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
+import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import com.coreyhorn.mvpiframework.views.MVIFragment
 import com.coreyhorn.mvpiframeworkexample.*
 import kotlinx.android.synthetic.main.fragment_example.view.*

@@ -1,4 +1,4 @@
-package com.coreyhorn.mvpiframework.viewmodel
+package com.coreyhorn.mvpiframework.architecture
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.coreyhorn.mvpiframework.MVIEvent
 import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState
-import com.coreyhorn.mvpiframework.architecture.MVIInteractor
 import com.coreyhorn.mvpiframework.disposeWith
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -40,13 +39,11 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     // This will allow any asynchronous tasks to be started early.
     fun conditionallyInitializeInteractor(): MVIInteractor<E, R> {
         if (interactor == null) {
-            Log.d("stuff", "creating a new interactor")
             with (provideInteractor(events)) {
                 interactor = this
                 return this
             }
         } else {
-            Log.d("stuff", "returning interactor")
             return interactor!!
         }
     }

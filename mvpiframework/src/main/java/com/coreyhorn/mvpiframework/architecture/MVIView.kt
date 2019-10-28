@@ -5,7 +5,6 @@ import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.coreyhorn.mvpiframework.*
-import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
@@ -37,6 +36,7 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
     }
 
     fun detachView() {
+        presenter?.states?.removeObservers(lifecycleOwner)
         presenter?.detachEvents()
         disposables.clear()
         events = ReplaySubject.create()
@@ -51,16 +51,15 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
+                it.states.removeObservers(lifecycleOwner)
                 Log.d("stuff", "attaching events and states")
                 it.attachEvents(events, initialState())
                 it.states
                         .observe(lifecycleOwner, object: Observer<S> {
                             override fun onChanged(state: S) {
-                                Log.d("stuff", "state has changed")
                                 rootView?.let { view ->
                                     view.post {
                                         if (attached) {
-                                            Log.d("stuff", "calling render state")
                                             renderState(view, state)
                                         }
                                     }

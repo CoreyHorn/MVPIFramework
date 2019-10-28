@@ -1,7 +1,7 @@
 package com.coreyhorn.mvpiframeworkexample.fragment
 
 import com.coreyhorn.mvpiframework.architecture.MVIInteractor
-import com.coreyhorn.mvpiframework.viewmodel.MVIViewModel
+import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import com.coreyhorn.mvpiframeworkexample.ExampleEvent
 import com.coreyhorn.mvpiframeworkexample.ExampleResult
 import com.coreyhorn.mvpiframeworkexample.ExampleState
