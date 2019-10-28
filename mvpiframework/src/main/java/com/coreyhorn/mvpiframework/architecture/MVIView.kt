@@ -36,15 +36,16 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
     }
 
     fun detachView() {
+        Log.d("stuff", "detach view: " + this)
         presenter?.states?.removeObservers(lifecycleOwner)
         presenter?.detachView()
         disposables.clear()
-        events = ReplaySubject.create()
         attached = false
     }
 
     fun attachIfReady() {
         if (readyToAttach()) {
+            Log.d("stuff", "attaching view: " + this)
             attached = true
             disposables.clear()
             disposables = CompositeDisposable()
