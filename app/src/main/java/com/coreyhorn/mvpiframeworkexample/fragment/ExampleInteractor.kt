@@ -21,6 +21,8 @@ class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<Example
                     pushResult(ExampleResult.ChangedText(UUID.randomUUID().toString()))
                 }
                 .disposeWith(disposables)
+
+        connect()
     }
 
     override fun eventToResult(event: ExampleEvent): ExampleResult {
