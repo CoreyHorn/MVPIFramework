@@ -68,11 +68,6 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
                                 }
                             }
                         })
-
-//                events.doOnNext { event ->
-//                    if (MVPISettings.loggingEnabled) {
-//                        Log.d(LOGGING_TAG, event?.toString())
-//                    }}.subscribe().disposeWith(disposables)
             }
         }
     }

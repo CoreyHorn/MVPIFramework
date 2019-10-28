@@ -51,25 +51,25 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     }
 
     fun attachEvents(events: Observable<E>, state: S) {
+        if (!isInteractorConnected) {
+            isInteractorConnected = true
+            with (conditionallyInitializeInteractor()) {
+                /* Uses the current state value as seed unless we don't have one.
+                *  Else seed with the state provided by this function.
+                *  Allows passing in data from savedInstanceState that
+                *  we can use if the ViewModel has been recreated */
+                this.results().scan(states.value?: state, ::resultToState)
+                        .subscribe { states.value = it }
+                        .disposeWith(interactorDisposables)
+            }
+        }
+
         if (!isViewConnected) {
             isViewConnected = true
             eventDisposables.clear()
 
             events.subscribe { this.events.onNext(it) }
                     .disposeWith(eventDisposables)
-        }
-
-        if (!isInteractorConnected) {
-            isInteractorConnected = true
-            with (conditionallyInitializeInteractor()) {
-                 /* Uses the current state value as seed unless we don't have one.
-                 *  Else seed with the state provided by this function.
-                 *  Allows passing in data from savedInstanceState that
-                 *  we can use if the ViewModel has been recreated */
-                this.results().scan(states.value?: state, ::resultToState)
-                        .subscribe { states.value = it }
-                        .disposeWith(interactorDisposables)
-            }
         }
     }
 

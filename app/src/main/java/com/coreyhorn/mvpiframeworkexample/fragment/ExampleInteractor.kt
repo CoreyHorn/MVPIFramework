@@ -14,11 +14,12 @@ import java.util.concurrent.TimeUnit
 class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<ExampleEvent, ExampleResult>(events) {
 
     init {
-        Observable.interval(0, 5, TimeUnit.SECONDS)
+        Observable.interval(0, 10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Log.d("stuff", "new text: " + this.toString())
-                    pushResult(ExampleResult.ChangedText(UUID.randomUUID().toString()))
+                    val text = UUID.randomUUID().toString()
+                    Log.d("stuff", "new text: " + text)
+                    pushResult(ExampleResult.ChangedText(text))
                 }
                 .disposeWith(disposables)
 
@@ -28,7 +29,11 @@ class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<Example
     override fun eventToResult(event: ExampleEvent): ExampleResult {
         return when (event) {
             is ExampleEvent.TestEvent -> ExampleResult.TestResult()
-            is ExampleEvent.ChangeText -> ExampleResult.ChangedText(UUID.randomUUID().toString())
+            is ExampleEvent.ChangeText -> {
+                val text = UUID.randomUUID().toString()
+                Log.d("stuff", "event received " + text)
+                ExampleResult.ChangedText(text)
+            }
         }
     }
 }

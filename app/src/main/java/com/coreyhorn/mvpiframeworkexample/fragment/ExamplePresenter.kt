@@ -1,5 +1,6 @@
 package com.coreyhorn.mvpiframeworkexample.fragment
 
+import android.util.Log
 import com.coreyhorn.mvpiframework.architecture.MVIInteractor
 import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import com.coreyhorn.mvpiframeworkexample.ExampleEvent
@@ -16,7 +17,10 @@ class ExamplePresenter: MVIViewModel<ExampleEvent, ExampleResult, ExampleState>(
     override fun resultToState(previousState: ExampleState, result: ExampleResult): ExampleState {
         return when (result) {
             is ExampleResult.TestResult -> previousState
-            is ExampleResult.ChangedText -> previousState.copy(whatever = result.text)
+            is ExampleResult.ChangedText -> {
+                Log.d("stuff", "new text: " + result.text + " presenter")
+                previousState.copy(whatever = result.text)
+            }
         }
     }
 }
