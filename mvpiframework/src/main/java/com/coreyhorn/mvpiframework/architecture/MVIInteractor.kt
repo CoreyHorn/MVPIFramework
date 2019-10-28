@@ -23,7 +23,7 @@ abstract class MVIInteractor<E: MVIEvent, R: MVIResult>(events: Observable<E>): 
 
     fun results(): Observable<R> = results
 
-    fun destroy() {
+    open fun destroy() {
         disposables.clear()
     }
 

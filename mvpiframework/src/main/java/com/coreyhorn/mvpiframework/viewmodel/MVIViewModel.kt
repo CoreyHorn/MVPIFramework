@@ -31,6 +31,7 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
         interactorDisposables.dispose()
         interactor?.destroy()
         interactor = null
+        isInteractorConnected = false
 
         super.onCleared()
     }
@@ -57,6 +58,7 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
                 .disposeWith(eventDisposables)
 
         if (!isInteractorConnected) {
+            isInteractorConnected = true
             with (conditionallyInitializeInteractor()) {
                  /* Uses the current state value as seed unless we don't have one.
                  *  Else seed with the state provided by this function.
@@ -72,7 +74,6 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     fun detachEvents() {
         eventDisposables.clear()
     }
-
 
 }
 

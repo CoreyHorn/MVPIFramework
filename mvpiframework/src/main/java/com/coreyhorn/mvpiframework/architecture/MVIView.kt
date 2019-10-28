@@ -1,6 +1,5 @@
 package com.coreyhorn.mvpiframework.architecture
 
-import android.content.Context
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
@@ -22,7 +21,6 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     var lifecycleOwner: LifecycleOwner
 
-    fun getContext(): Context?
     fun presenterProvider(): MVIViewModel<E, R, S>
 
     fun renderState(view: View, state: S)
@@ -30,14 +28,11 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
     fun initialState(): S
 
     // Called when the view is inflated and we have our initial / saved state provided by the Activity / Fragment
-
-    /**
-     * Should be called as soon as the view has been inflated and can be modified / bound to.
-     */
     fun viewReady(view: View, lifecycleOwner: LifecycleOwner, presenter: MVIViewModel<E, R, S>) {
         this.presenter = presenter
         this.lifecycleOwner = lifecycleOwner
-        rootView = view
+        this.rootView = view
+
         attachIfReady()
     }
 
@@ -50,17 +45,25 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     fun attachIfReady() {
         if (readyToAttach()) {
+            attached = true
             disposables.clear()
             disposables = CompositeDisposable()
 
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
+                Log.d("stuff", "attaching events and states")
                 it.attachEvents(events, initialState())
                 it.states
                         .observe(lifecycleOwner, object: Observer<S> {
                             override fun onChanged(state: S) {
+                                Log.d("stuff", "state has changed")
                                 rootView?.let { view ->
-                                    view.post { if (attached) renderState(view, state) }
+                                    view.post {
+                                        if (attached) {
+                                            Log.d("stuff", "calling render state")
+                                            renderState(view, state)
+                                        }
+                                    }
                                 }
                             }
                         })
@@ -70,7 +73,6 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
                         Log.d(LOGGING_TAG, event?.toString())
                     }}.subscribe().disposeWith(disposables)
             }
-            attached = true
         }
     }
 
