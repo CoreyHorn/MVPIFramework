@@ -6,11 +6,11 @@ import com.coreyhorn.mvpiframework.disposeWith
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
 
 abstract class MVIInteractor<E: MVIEvent, R: MVIResult>(private val events: Observable<E>): Interactor<E, R> {
 
-    private val results: PublishSubject<R> = PublishSubject.create()
+    private val results: ReplaySubject<R> = ReplaySubject.create()
 
     val disposables = CompositeDisposable()
 

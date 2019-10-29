@@ -26,10 +26,10 @@ class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState == null) {
-            Log.d("stuff", "sending event")
-            events.onNext(ExampleEvent.ChangeText())
-        }
+//        if (savedInstanceState == null) {
+//            Log.d("stuff", "sending event")
+//            events.onNext(ExampleEvent.ChangeText())
+//        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -13,7 +13,8 @@ import java.util.concurrent.TimeUnit
 class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<ExampleEvent, ExampleResult>(events) {
 
     init {
-        Observable.interval(0, 10, TimeUnit.SECONDS)
+        Observable.interval(10, 10, TimeUnit.SECONDS)
+//                .startWith(0L)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     val text = UUID.randomUUID().toString()
