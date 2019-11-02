@@ -1,6 +1,6 @@
 package com.coreyhorn.mvpiframework.architecture
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.coreyhorn.mvpiframework.MVIEvent
@@ -13,7 +13,7 @@ import io.reactivex.subjects.PublishSubject
 
 abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel(), Presenter<E, R, S> {
 
-    val states: MutableLiveData<S> = MutableLiveData()
+    private val states: MutableLiveData<S> = MutableLiveData()
     private val events: PublishSubject<E> = PublishSubject.create()
 
     private var eventDisposables = CompositeDisposable()
@@ -34,6 +34,8 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
 
         super.onCleared()
     }
+
+    fun states(): LiveData<S> = states
 
     // Called before streams are connected to initialize interactor.
     // This will allow any asynchronous tasks to be started early.

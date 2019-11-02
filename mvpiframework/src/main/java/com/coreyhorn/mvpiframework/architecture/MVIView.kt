@@ -38,7 +38,7 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
     }
 
     fun detachView() {
-        presenter?.states?.removeObservers(lifecycleOwner)
+        presenter?.states()?.removeObservers(lifecycleOwner)
         presenter?.detachView()
         disposables.clear()
         events = ReplaySubject.create()
@@ -53,9 +53,9 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
-                it.states.removeObservers(lifecycleOwner)
+                it.states().removeObservers(lifecycleOwner)
                 it.attachEvents(events, initialState())
-                it.states
+                it.states()
                         .observe(lifecycleOwner, object: Observer<S> {
                             override fun onChanged(state: S) {
                                 rootView?.let { view ->
