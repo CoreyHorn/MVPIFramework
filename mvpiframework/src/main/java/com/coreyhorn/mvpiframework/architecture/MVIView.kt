@@ -29,8 +29,8 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
     fun initialState(): S
 
     // Called when the view is inflated and we have our initial / saved state provided by the Activity / Fragment
-    fun viewReady(view: View, lifecycleOwner: LifecycleOwner, presenter: MVIViewModel<E, R, S>) {
-        this.presenter = presenter
+    fun viewReady(view: View, lifecycleOwner: LifecycleOwner) {
+        this.presenter = presenterProvider()
         this.lifecycleOwner = lifecycleOwner
         this.rootView = view
 

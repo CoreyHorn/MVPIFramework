@@ -31,7 +31,7 @@ abstract class MVIFragment<E: MVIEvent, R: MVIResult, S: MVIState>: Fragment(), 
         view.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                viewReady(view, this@MVIFragment, presenterProvider())
+                viewReady(view, this@MVIFragment)
             }
         })
     }

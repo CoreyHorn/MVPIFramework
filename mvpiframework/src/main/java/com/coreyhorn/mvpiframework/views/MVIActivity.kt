@@ -30,7 +30,7 @@ abstract class MVIActivity<E : MVIEvent, R : MVIResult, S : MVIState> : AppCompa
         view.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                viewReady(view, this@MVIActivity, presenterProvider())
+                viewReady(view, this@MVIActivity)
             }
         })
     }
