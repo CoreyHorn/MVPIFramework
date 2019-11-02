@@ -38,7 +38,6 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
     }
 
     fun detachView() {
-        Log.d("stuff", "detach view: " + this)
         presenter?.states?.removeObservers(lifecycleOwner)
         presenter?.detachView()
         disposables.clear()
@@ -48,7 +47,6 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     fun attachIfReady() {
         if (readyToAttach()) {
-            Log.d("stuff", "attaching view: " + this)
             attached = true
             disposables.clear()
             disposables = CompositeDisposable()
@@ -56,7 +54,6 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
                 it.states.removeObservers(lifecycleOwner)
-                Log.d("stuff", "attaching events and states")
                 it.attachEvents(events, initialState())
                 it.states
                         .observe(lifecycleOwner, object: Observer<S> {

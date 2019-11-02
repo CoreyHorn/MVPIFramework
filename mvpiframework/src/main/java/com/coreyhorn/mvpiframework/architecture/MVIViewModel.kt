@@ -25,7 +25,6 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     private var interactor: MVIInteractor<E, R>? = null
 
     override fun onCleared() {
-        Log.d("stuff", "clearing viewmodel: " + this)
         eventDisposables.dispose()
         interactorDisposables.dispose()
         interactor?.destroy()

@@ -18,7 +18,6 @@ class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<Example
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     val text = UUID.randomUUID().toString()
-                    Log.d("stuff", "new text: " + text)
                     pushResult(ExampleResult.ChangedText(text))
                 }
                 .disposeWith(disposables)
@@ -31,7 +30,6 @@ class ExampleInteractor(events: Observable<ExampleEvent>): MVIInteractor<Example
             is ExampleEvent.TestEvent -> ExampleResult.TestResult()
             is ExampleEvent.ChangeText -> {
                 val text = UUID.randomUUID().toString()
-                Log.d("stuff", "event received " + text)
                 ExampleResult.ChangedText(text)
             }
         }

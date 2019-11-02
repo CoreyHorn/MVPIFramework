@@ -18,7 +18,6 @@ class ExamplePresenter: MVIViewModel<ExampleEvent, ExampleResult, ExampleState>(
         return when (result) {
             is ExampleResult.TestResult -> previousState
             is ExampleResult.ChangedText -> {
-                Log.d("stuff", "new text: " + result.text + " presenter")
                 previousState.copy(whatever = result.text)
             }
         }
