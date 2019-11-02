@@ -1,2 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.coreyhorn.mvpiframework" />
+<manifest package="com.coreyhorn.mvpiframework" />
