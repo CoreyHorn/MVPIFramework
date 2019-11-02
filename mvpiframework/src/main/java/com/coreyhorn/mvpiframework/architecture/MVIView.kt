@@ -1,6 +1,5 @@
 package com.coreyhorn.mvpiframework.architecture
 
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -49,24 +48,23 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
         if (readyToAttach()) {
             attached = true
             disposables.clear()
-            disposables = CompositeDisposable()
 
             rootView?.let { it.post { setupViewBindings(it) } }
             presenter?.let {
                 it.states().removeObservers(lifecycleOwner)
                 it.attachEvents(events, initialState())
-                it.states()
-                        .observe(lifecycleOwner, object: Observer<S> {
-                            override fun onChanged(state: S) {
-                                rootView?.let { view ->
-                                    view.post {
-                                        if (attached) {
-                                            renderState(view, state)
-                                        }
-                                    }
+                it.states().observe(lifecycleOwner, object: Observer<S> {
+
+                    override fun onChanged(state: S) {
+                        rootView?.let { view ->
+                            view.post {
+                                if (attached) {
+                                    renderState(view, state)
                                 }
                             }
-                        })
+                        }
+                    }
+                })
             }
         }
     }

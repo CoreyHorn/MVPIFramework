@@ -27,7 +27,6 @@ class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() 
         super.onCreate(savedInstanceState)
 
 //        if (savedInstanceState == null) {
-//            Log.d("stuff", "sending event")
 //            events.onNext(ExampleEvent.ChangeText())
 //        }
     }
@@ -37,7 +36,7 @@ class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() 
     }
 
     override fun presenterProvider(): MVIViewModel<ExampleEvent, ExampleResult, ExampleState> {
-        return ViewModelProviders.of(this@ExampleFragment).get(ExamplePresenter::class.java)
+        return ViewModelProviders.of(this@ExampleFragment).get(ExampleViewModel::class.java)
     }
 
     override fun renderState(view: View, state: ExampleState) {

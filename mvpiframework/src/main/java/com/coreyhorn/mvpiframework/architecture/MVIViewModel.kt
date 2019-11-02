@@ -8,6 +8,7 @@ import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState
 import com.coreyhorn.mvpiframework.disposeWith
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 
@@ -16,39 +17,9 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     private val states: MutableLiveData<S> = MutableLiveData()
     private val events: PublishSubject<E> = PublishSubject.create()
 
-    private var eventDisposables = CompositeDisposable()
-    private var interactorDisposables = CompositeDisposable()
-
-    private var isInteractorConnected = false
-    private var isViewConnected = false
-
     private var interactor: MVIInteractor<E, R>? = null
 
-    override fun onCleared() {
-        eventDisposables.dispose()
-        interactorDisposables.dispose()
-        interactor?.destroy()
-        interactor = null
-        isInteractorConnected = false
-        isViewConnected = false
-
-        super.onCleared()
-    }
-
     fun states(): LiveData<S> = states
-
-    // Called before streams are connected to initialize interactor.
-    // This will allow any asynchronous tasks to be started early.
-    fun conditionallyInitializeInteractor(): MVIInteractor<E, R> {
-        if (interactor == null) {
-            with (provideInteractor(events)) {
-                interactor = this
-                return this
-            }
-        } else {
-            return interactor!!
-        }
-    }
 
     fun attachEvents(events: Observable<E>, state: S) {
         if (!isInteractorConnected) {
@@ -59,6 +30,14 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
                 *  Allows passing in data from savedInstanceState that
                 *  we can use if the ViewModel has been recreated */
                 this.results().scan(states.value?: state, ::resultToState)
+                        .distinctUntilChanged { oldValue, newValue ->
+                            if (renderUnchangedStates()) {
+                                    false
+                                } else {
+                                    oldValue == newValue
+                                }
+                            }
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { states.value = it }
                         .disposeWith(interactorDisposables)
             }
@@ -77,6 +56,40 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
         isViewConnected = false
         eventDisposables.clear()
     }
+
+    /**
+     * Override in the ViewModel and return true if you want renderState called even when
+     * the state hasn't changed. Leaving untouched filters out duplicate states.
+     */
+    open fun renderUnchangedStates() = false
+
+    override fun onCleared() {
+        eventDisposables.dispose()
+        interactorDisposables.dispose()
+        interactor?.destroy()
+        interactor = null
+        isInteractorConnected = false
+        isViewConnected = false
+
+        super.onCleared()
+    }
+
+    private fun conditionallyInitializeInteractor(): MVIInteractor<E, R> {
+        if (interactor == null) {
+            with (provideInteractor(events)) {
+                interactor = this
+                return this
+            }
+        } else {
+            return interactor!!
+        }
+    }
+
+    private var eventDisposables = CompositeDisposable()
+    private var interactorDisposables = CompositeDisposable()
+
+    private var isInteractorConnected = false
+    private var isViewConnected = false
 
 }
 
