@@ -3,16 +3,14 @@ package com.coreyhorn.mvpiframework.architecture
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.coreyhorn.mvpiframework.MVIEvent
-import com.coreyhorn.mvpiframework.MVIResult
-import com.coreyhorn.mvpiframework.MVIState
+import com.coreyhorn.mvpiframework.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
-interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
+interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState, L: MVILiveEvent> {
 
     var events: ReplaySubject<E>
-    var presenter: MVIViewModel<E, R, S>?
+    var presenter: MVIViewModel<E, R, S, L>?
     var disposables: CompositeDisposable
 
     var rootView: View?
@@ -21,9 +19,10 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
     var lifecycleOwner: LifecycleOwner
 
-    fun presenterProvider(): MVIViewModel<E, R, S>
+    fun presenterProvider(): MVIViewModel<E, R, S, L>
 
     fun renderState(view: View, state: S)
+    fun handleLiveEvent(view: View, liveEvent: L)
     fun setupViewBindings(view: View)
     fun initialState(): S
 
@@ -57,14 +56,16 @@ interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 
                     override fun onChanged(state: S) {
                         rootView?.let { view ->
-                            view.post {
-                                if (attached) {
-                                    renderState(view, state)
-                                }
-                            }
+                            view.post { if (attached) renderState(view, state) }
                         }
                     }
+
                 })
+                it.liveEvents().subscribe {
+                    rootView?.let { view ->
+                        view.post { if (attached) handleLiveEvent(view, it) }
+                    }
+                }.disposeWith(disposables)
             }
         }
     }

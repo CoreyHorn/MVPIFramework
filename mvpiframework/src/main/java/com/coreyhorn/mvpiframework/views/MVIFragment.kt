@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.coreyhorn.mvpiframework.MVIEvent
+import com.coreyhorn.mvpiframework.MVILiveEvent
 import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState
 import com.coreyhorn.mvpiframework.architecture.MVIView
@@ -12,10 +13,10 @@ import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.ReplaySubject
 
-abstract class MVIFragment<E: MVIEvent, R: MVIResult, S: MVIState>: Fragment(), MVIView<E, R, S> {
+abstract class MVIFragment<E: MVIEvent, R: MVIResult, S: MVIState, L: MVILiveEvent>: Fragment(), MVIView<E, R, S, L> {
 
     override var events: ReplaySubject<E> = ReplaySubject.create()
-    override var presenter: MVIViewModel<E, R, S>? = null
+    override var presenter: MVIViewModel<E, R, S, L>? = null
     override var disposables: CompositeDisposable = CompositeDisposable()
     override var rootView: View? = null
     override var attached: Boolean = false

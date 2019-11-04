@@ -3,23 +3,26 @@ package com.coreyhorn.mvpiframework.architecture
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.coreyhorn.mvpiframework.MVIEvent
-import com.coreyhorn.mvpiframework.MVIResult
-import com.coreyhorn.mvpiframework.MVIState
-import com.coreyhorn.mvpiframework.disposeWith
+import com.coreyhorn.mvpiframework.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
 
-abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel(), Presenter<E, R, S> {
+abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState, L: MVILiveEvent>: ViewModel(), Presenter<E, R, S> {
 
     private val states: MutableLiveData<S> = MutableLiveData()
+
     private val events: PublishSubject<E> = PublishSubject.create()
+
+    private var liveEvents = ReplaySubject.create<L>()
 
     private var interactor: MVIInteractor<E, R>? = null
 
     fun states(): LiveData<S> = states
+
+    fun liveEvents(): Observable<L> = liveEvents
 
     fun attachEvents(events: Observable<E>, state: S) {
         if (!isInteractorConnected) {
@@ -53,6 +56,7 @@ abstract class MVIViewModel<E: MVIEvent, R: MVIResult, S: MVIState>: ViewModel()
     }
 
     fun detachView() {
+        liveEvents = ReplaySubject.create<L>()
         isViewConnected = false
         eventDisposables.clear()
     }
