@@ -5,7 +5,7 @@ import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import com.coreyhorn.mvpiframeworkexample.ExampleEvent
 import com.coreyhorn.mvpiframeworkexample.ExampleResult
 import com.coreyhorn.mvpiframeworkexample.ExampleState
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 class ExampleViewModel: MVIViewModel<ExampleEvent, ExampleResult, ExampleState>() {
 

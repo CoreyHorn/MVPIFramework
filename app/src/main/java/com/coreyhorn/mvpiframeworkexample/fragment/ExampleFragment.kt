@@ -1,21 +1,22 @@
 package com.coreyhorn.mvpiframeworkexample.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.coreyhorn.mvpiframework.architecture.MVIViewModel
 import com.coreyhorn.mvpiframework.views.MVIFragment
 import com.coreyhorn.mvpiframeworkexample.ExampleEvent
 import com.coreyhorn.mvpiframeworkexample.ExampleResult
 import com.coreyhorn.mvpiframeworkexample.ExampleState
-import com.coreyhorn.mvpiframeworkexample.R
-import kotlinx.android.synthetic.main.fragment_example.view.*
+import com.coreyhorn.mvpiframeworkexample.databinding.FragmentExampleBinding
 
 class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() {
+
+    private var _binding: FragmentExampleBinding? = null
+    private val binding get() = _binding!!
 
     override var lifecycleOwner: LifecycleOwner = this
 
@@ -31,20 +32,26 @@ class ExampleFragment: MVIFragment<ExampleEvent, ExampleResult, ExampleState>() 
 //        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_example, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentExampleBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun presenterProvider(): MVIViewModel<ExampleEvent, ExampleResult, ExampleState> {
-        return ViewModelProviders.of(this@ExampleFragment).get(ExampleViewModel::class.java)
+        return ViewModelProvider(this@ExampleFragment).get(ExampleViewModel::class.java)
     }
 
     override fun renderState(view: View, state: ExampleState) {
-        view.fragmentText.text = state.whatever
+        binding.fragmentText.text = state.whatever
     }
 
     override fun setupViewBindings(view: View) {
-        view.changeText.setOnClickListener {
+        binding.changeText.setOnClickListener {
             events.onNext(ExampleEvent.ChangeText())
         }
     }
