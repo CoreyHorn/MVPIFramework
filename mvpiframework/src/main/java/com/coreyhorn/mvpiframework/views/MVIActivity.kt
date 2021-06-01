@@ -40,7 +40,7 @@ abstract class MVIActivity<E : MVIEvent, R : MVIResult, S : MVIState> : AppCompa
         attachIfReady()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         detachView()
         super.onSaveInstanceState(outState, outPersistentState)
     }
