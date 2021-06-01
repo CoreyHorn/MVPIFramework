@@ -1,12 +1,11 @@
 package com.coreyhorn.mvpiframeworkexample.fragment
 
-import android.util.Log
 import com.coreyhorn.mvpiframework.architecture.MVIInteractor
 import com.coreyhorn.mvpiframework.disposeWith
 import com.coreyhorn.mvpiframeworkexample.ExampleEvent
 import com.coreyhorn.mvpiframeworkexample.ExampleResult
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import java.util.*
 import java.util.concurrent.TimeUnit
 

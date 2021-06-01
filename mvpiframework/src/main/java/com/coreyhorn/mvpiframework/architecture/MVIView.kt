@@ -6,8 +6,9 @@ import androidx.lifecycle.Observer
 import com.coreyhorn.mvpiframework.MVIEvent
 import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.ReplaySubject
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.subjects.ReplaySubject
+
 
 interface MVIView<E: MVIEvent, R: MVIResult, S: MVIState> {
 

@@ -3,10 +3,10 @@ package com.coreyhorn.mvpiframework.architecture
 import com.coreyhorn.mvpiframework.MVIEvent
 import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.disposeWith
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.ReplaySubject
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.subjects.ReplaySubject
 
 abstract class MVIInteractor<E: MVIEvent, R: MVIResult>(private val events: Observable<E>): Interactor<E, R> {
 

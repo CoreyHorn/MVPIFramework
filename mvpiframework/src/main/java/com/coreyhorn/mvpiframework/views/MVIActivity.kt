@@ -11,8 +11,8 @@ import com.coreyhorn.mvpiframework.MVIResult
 import com.coreyhorn.mvpiframework.MVIState
 import com.coreyhorn.mvpiframework.architecture.MVIView
 import com.coreyhorn.mvpiframework.architecture.MVIViewModel
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.ReplaySubject
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.subjects.ReplaySubject
 
 abstract class MVIActivity<E : MVIEvent, R : MVIResult, S : MVIState> : AppCompatActivity(), MVIView<E, R, S> {
 
