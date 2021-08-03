@@ -1,14 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 30
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -35,40 +34,13 @@ dependencies {
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 }
 
 repositories {
     mavenCentral()
 }
 
-ext {
-    bintrayRepo = 'MVPI-Framework'
-    bintrayName = 'MVPI-Framework'
-
-    publishedGroupId = 'com.coreyhorn'
-    libraryName = 'MVPIFramework'
-    artifact = 'MVPIFramework'
-
-    libraryDescription = 'Framework to make MVPI easy'
-
-    siteUrl = 'https://github.com/CoreyHorn/MVPIFramework'
-    gitUrl = 'https://github.com/CoreyHorn/MVPIFramework.git'
-
-    libraryVersion = '1.0.0'
-
-    developerId = 'CoreyHorn'
-    developerName = 'Corey Horn'
-    developerEmail = 'horn.corey.j@gmail.com.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
 tasks.withType(Javadoc) {
     excludes = ['**/*.kt']
 }
-
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
